@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>【论文导读】ReAct：Synergizing Reasoning and Acting in Language Models - 无糖-川大LLM实习Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="无糖-川大LLM实习Blog"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="无糖-川大LLM实习Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="介绍了将思维链和外部知识库结合的Prompt技术——ReAct，目前该技术已经整合到Langchain，有较高应用价值"><meta property="og:type" content="blog"><meta property="og:title" content="【论文导读】ReAct：Synergizing Reasoning and Acting in Language Models"><meta property="og:url" content="https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/"><meta property="og:site_name" content="无糖-川大LLM实习Blog"><meta property="og:description" content="介绍了将思维链和外部知识库结合的Prompt技术——ReAct，目前该技术已经整合到Langchain，有较高应用价值"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230619172040742.png"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230619172053848.png"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230620002417751.png"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230620005152572.png"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230620005207426.png"><meta property="article:published_time" content="2023-06-20T09:40:26.000Z"><meta property="article:modified_time" content="2023-06-24T14:33:27.430Z"><meta property="article:author" content="Azyka"><meta property="article:tag" content="论文阅读"><meta property="article:tag" content="Prompt Engineering"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230619172040742.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/"},"headline":"【论文导读】ReAct：Synergizing Reasoning and Acting in Language Models","image":["https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230619172040742.png","https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230619172053848.png","https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230620002417751.png","https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230620005152572.png","https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230620005207426.png"],"datePublished":"2023-06-20T09:40:26.000Z","dateModified":"2023-06-24T14:33:27.430Z","author":{"@type":"Person","name":"Azyka"},"publisher":{"@type":"Organization","name":"无糖-川大LLM实习Blog","logo":{"@type":"ImageObject","url":"https://llm-frame-group.github.io/img/logo.svg"}},"description":"介绍了将思维链和外部知识库结合的Prompt技术——ReAct，目前该技术已经整合到Langchain，有较高应用价值"}</script><link rel="canonical" href="https://llm-frame-group.github.io/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="无糖-川大LLM实习Blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/LLM-Frame-Group"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2023-06-20T09:40:26.000Z" title="6/20/2023, 9:40:26 AM">2023-06-20</time>发表</span><span class="level-item"><time dateTime="2023-06-24T14:33:27.430Z" title="6/24/2023, 2:33:27 PM">2023-06-24</time>更新</span><span class="level-item"> Azyka </span><span class="level-item">15 分钟读完 (大约2324个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">【论文导读】ReAct：Synergizing Reasoning and Acting in Language Models</h1><div class="content"><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p><strong>ReAct：结合reasoning和acting。Reasoning允许模型进行模型归纳、跟踪和更新行动计划，甚至处理异常。Acting允许模型与外部资源（例如知识库或环境）交互并从中收集信息。</strong></p>
+<p>传统的思维链方法虽然让模型实现了逐步推理得到结果的过程，但整个推理都基于模型的内部表示，而无法从外部世界获取信息，这限制了他的推理能力和知识更新能力。同时思维链中还会产生事实幻觉和错误传播等问题。</p>
+<p>论文发布时，现有的方法只是实现了模型与几个模块交互的简单任务执行，还没有关于推理和行动如何以协同方式结合来解决一般任务的研究，以及与单独推理或行动相比，这种组合是否能带来性能提升的调研。</p>
+<p>论文的具体贡献如下：</p>
+<ol>
+<li>提出了ReAct，<strong>在语言模型中实现协同推理和行动以解决一般任务</strong></li>
+<li>在不同benchmark上广泛实验，验证了<strong>ReAct在few-shot任务中的优势</strong></li>
+<li><strong>进行了消融实验和分析</strong>，以了解在推理任务中采取行动和在交互任务中推理的重要性；</li>
+<li>分析了 ReAct 在prompt下的局限性（即对reason和act的有限支持），并进行了初始微调实验，显示了 ReAct 通过额外训练数据进行改进的潜力。</li>
+</ol>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>考虑agent与环境交互以解决任务的一般设置。在时间阶段 $t$，agent从环境收到一个观察值 $o_t ∈ O$，基于策略 $\pi(a_t|c_t)$ 执行动作 $a_t\in A$，其中 $c_t &#x3D; (o_1, a_1, · · · , o_{t−1}, a_{t−1}, o_t)$ 是agent的上下文。学习这样一个条件策略是非常困难的，如下图所示，常规方法无法解决需要对轨迹上下文进行复杂推理的QA任务（找出Apple remote的另一种控制设备）。</p>
+<img src="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230619172040742.png" class="" alt="QA">
+
+<p>相似的，下图中单纯的动作执行没有充分理解上下文，误解了胡椒瓶所在的位置。</p>
+<img src="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230619172053848.png" class="" alt="决策">
+
+
+
+<p>ReAct的想法很简单：将agent的动作空间扩大 $\widehat{A}&#x3D;A\cup L$，其中 $L$ 是语言空间，语言空间的一个动作 $\widehat{a_t}\in L$ ，称之为思维（thought）或推理轨迹（reasoning trace），不影响外部环境，因此也不需要观察反馈。思维 $\widehat{a_t}$ 旨在通过推理当前上下文 $c_t$ 来组成更多的有价值信息，并更新上下文 $c_{t+1}&#x3D;(c_t,\widehat{a_t})$ 来支撑下一步推理或动作。<strong>思维有多种作用，如分解任务目标、导入任务相关的常识信息、提取观察中的重点部分、跟踪进度并更新计划、解决报错并调整计划等等。</strong></p>
+<p>关键问题在于语言空间 $L$ 不受限制，需要强语言前提。文中主要关注通过few-shot prompt提供上下文示例来生成特定领域的动作和各种形式的语言思维以解决任务。<strong>对于高度依赖推理的任务，思维和动作交替进行</strong>，使得过程包含多个thought-action-observation步骤。<strong>而对于决策类型的任务（包含大量的动作），思维只需要稀疏地出现在最关键的位置，</strong>由模型决定思维和动作的出现位置。</p>
+<h1 id="知识密集型推理任务"><a href="#知识密集型推理任务" class="headerlink" title="知识密集型推理任务"></a>知识密集型推理任务</h1><p>通过与维基百科 API 交互，ReAct 能够检索信息以支持推理，同时还使用推理来确定接下来要检索的内容，展示了推理和行动的协同作用。实验使用2个数据集——HotPotQA、FEVER。</p>
+<h2 id="动作空间"><a href="#动作空间" class="headerlink" title="动作空间"></a>动作空间</h2><p>论文设计了简单的维基百科API，它具有三种类型的操作来支持交互式信息检索：</p>
+<ul>
+<li>search[entity]：如果存在，则返回相应实体 wiki 页面的前 5 个句子，否则从维基百科搜索引擎返回前 5 个相似实体；</li>
+<li>lookup[string]：它将返回包含string的页面中的下一个句子，模拟浏览器上的 Ctrl+F 功能；</li>
+<li>finish[answer]：用answer结束当前任务。</li>
+</ul>
+<p>值得注意的是，这个动作空间只能根据准确的段落名称检索段落的一小部分，这明显弱于最先进的词汇或神经检索器。这样设计的目的是模拟人类与维基百科的互动方式，并强制模型通过语言的显式推理进行检索。</p>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>对于 HotpotQA 和 Fever，我们从训练集中随机选择 6 个和 3 个案例，手动构建ReAct格式的思维轨迹，组成few-shot prompts，每条轨迹都由多个思维-行动-观察步骤组成。如上文描述的，自由形式的思维用于实现不同的任务，如分解问题、提取信息、执行常识&#x2F;算术推理、指导搜索公式和综合最终答案。</p>
+<p>由于手动标注大规模推理过程和动作非常困难，考虑使用3000个现有的思维轨迹微调较小的语言模型 (PaLM-8&#x2F;62B) ，用于基于输入解析思维轨迹。</p>
+<h2 id="实验效果"><a href="#实验效果" class="headerlink" title="实验效果"></a>实验效果</h2><ul>
+<li><strong>Standard</strong>：只给出问题-回答作为示例</li>
+<li><strong>Chain-of-thought（CoT）</strong>：移除动作和观察</li>
+<li><strong>Self-Consistency Chain-of-thought（CoT-SC）</strong>：在CoT的基础上使用不同结构的推理路径，生成多个答案，取其中出现次数最多的。</li>
+</ul>
+<p>上述方法中，ReAct所展示的问题解决过程更具事实性和基础性，而CoT在制定推理结构方面更准确，但很容易产生幻觉的事实或想法。文中结合ReAct和CoT-SC，并让模型根据以下启发法决定何时切换到另一种方法</p>
+<ul>
+<li><strong>ReAct → CoT-SC</strong>：当ReAct没有在规定步数内返回结果时，采用CoT-SC</li>
+<li><strong>CoT-SC → ReAct</strong>：当n个CoT-SC给出的答案中主流答案占比低于二分之一时，采用ReAct</li>
+</ul>
+<img src="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230620002417751.png" class="" alt="实验结果">
+
+<h1 id="决策型任务"><a href="#决策型任务" class="headerlink" title="决策型任务"></a>决策型任务</h1><p>在ALFWorld和WebShop这两个基于语言的交互式决策任务上测试了ReAct，两个任务都具有复杂的环境，代理需要在长期动作中以稀疏的奖励激励行动，强调推理来进行高效探索。</p>
+<ul>
+<li>ALFWorld：文本类游戏，它包括6种类型的任务，在这些任务中，代理需要通过文本动作（例如去咖啡桌1、拿纸2、使用台灯1）导航和与模拟家庭互动来实现高级目标（例如在台灯下检查纸张）。</li>
+<li>WebShop：在线购物网站环境，包含118万个真实世界的产品和12千条人工指令。与ALFWorld不同，网店包含多种结构化和非结构化文本，通过网络互动购买产品</li>
+</ul>
+<h2 id="实验效果-1"><a href="#实验效果-1" class="headerlink" title="实验效果"></a>实验效果</h2><ul>
+<li>ALFWorld<ul>
+<li>Inner Monologue（IM）：内心独白，所有动作前增加一段“内心独白”，与思维不同的是，IM受限于对环境的观察和实现目标需要满足的条件，而推理轨迹可以稀疏存在且支持更丰富的类型。</li>
+<li>ReAct-IM：使用IM替换思维（内部推理）。由于缺乏高层目标分解，ReAct-IM在确定子目标何时完成或下一个子目标应该是什么时经常出错。此外，由于缺乏常识性推理，许多ReAct IM轨迹难以确定物品可能在ALFWorld环境中的位置。</li>
+</ul>
+</li>
+</ul>
+<img src="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230620005152572.png" class="" alt="ALFWorld实验结果">
+
+<ul>
+<li><p>WebShop</p>
+<ul>
+<li><p>imitation learning（IL）：模仿学习，训练机器模仿人类的连续动作，与环境交互</p>
+</li>
+<li><p>reinforcement learning（RL）：强化学习，通过奖励函数提高机器在特定指标上的表现</p>
+</li>
+</ul>
+</li>
+</ul>
+<img src="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/image-20230620005207426.png" class="" alt="WebShop实验结果">
+
+
+
+<h1 id="LangChain-ReAct"><a href="#LangChain-ReAct" class="headerlink" title="LangChain ReAct"></a>LangChain ReAct</h1><p>LangChain中集成实现了ReAct框架，可以直接使用ReAct来建立agent执行任务，结合LLM和其他工具。<a target="_blank" rel="noopener" href="https://python.langchain.com/docs/modules/agents/agent_types/react_docstore">官方文档</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> load_tools</span><br><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> initialize_agent</span><br><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> AgentType</span><br><span class="line"><span class="keyword">from</span> langchain.llms <span class="keyword">import</span> OpenAI</span><br><span class="line">llm = OpenAI(model_name=<span class="string">&quot;text-davinci-003&quot;</span> ,temperature=<span class="number">0</span>)</span><br><span class="line">tools = load_tools([<span class="string">&quot;google-serper&quot;</span>, <span class="string">&quot;llm-math&quot;</span>], llm=llm)</span><br><span class="line">agent = initialize_agent(tools, llm, agent=<span class="string">&quot;zero-shot-react-description&quot;</span>, verbose=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+</div><div class="article-licensing box"><div class="licensing-title"><p>【论文导读】ReAct：Synergizing Reasoning and Acting in Language Models</p><p><a href="https://llm-frame-group.github.io/2023/06/20/【论文导读】ReAct：Synergizing-Reasoning-and-Acting-in-Language-Models/">https://llm-frame-group.github.io/2023/06/20/【论文导读】ReAct：Synergizing-Reasoning-and-Acting-in-Language-Models/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Azyka</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2023-06-20</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2023-06-24</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">论文阅读</a><a class="link-muted mr-2" rel="tag" href="/tags/Prompt-Engineering/">Prompt Engineering</a></div><!--!--></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91Large-language-models-are-human-level-prompt-engineers/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">【论文导读】Large language models are human-level prompt engineers</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2023/06/13/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88Finetune%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%BA%8C%E5%91%A8/"><span class="level-item">【总结】LLM论文阅读（Finetune篇）-第二周</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/img/avatar.png" alt="无糖-SCU LLM框架组"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">无糖-SCU LLM框架组</p><p class="is-size-6 is-block">更新中 ♪（＾∀＾●）ﾉｼ （●´∀｀）♪</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>中国 成都</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">11</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">3</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/LLM-Frame-Group" target="_blank" rel="noopener">关注我</a></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-24T21:32:49.000Z">2023-06-24</time></p><p class="title"><a href="/2023/06/24/%E3%80%90Auto-Task%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93%E3%80%91/">【Auto-Task项目总结】</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-20T10:20:33.000Z">2023-06-20</time></p><p class="title"><a href="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91The-RefinedWeb-Dataset-for-Falcon-LLM/">【论文导读】The RefinedWeb Dataset for Falcon LLM</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-20T10:09:21.000Z">2023-06-20</time></p><p class="title"><a href="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91QLoRA%EF%BC%9AEfficient-Finetuning-of-Quantized-LLMs/">【论文导读】QLoRA：Efficient Finetuning of Quantized LLMs</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-20T09:50:44.000Z">2023-06-20</time></p><p class="title"><a href="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91Large-language-models-are-human-level-prompt-engineers/">【论文导读】Large language models are human-level prompt engineers</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-20T09:40:26.000Z">2023-06-20</time></p><p class="title"><a href="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/">【论文导读】ReAct：Synergizing Reasoning and Acting in Language Models</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2023/"><span class="level-start"><span class="level-item">2023</span></span><span class="level-end"><span class="level-item tag">11</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Prompt-Engineering/"><span class="tag">Prompt Engineering</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/auto-task/"><span class="tag">auto-task</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/"><span class="tag">论文阅读</span><span class="tag">10</span></a></div></div></div></div></div><div class="column-right-shadow is-hidden-widescreen"></div></div><div class="column column-right is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only order-3"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#介绍"><span class="level-left"><span class="level-item">1</span><span class="level-item">介绍</span></span></a></li><li><a class="level is-mobile" href="#原理"><span class="level-left"><span class="level-item">2</span><span class="level-item">原理</span></span></a></li><li><a class="level is-mobile" href="#知识密集型推理任务"><span class="level-left"><span class="level-item">3</span><span class="level-item">知识密集型推理任务</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#动作空间"><span class="level-left"><span class="level-item">3.1</span><span class="level-item">动作空间</span></span></a></li><li><a class="level is-mobile" href="#方法"><span class="level-left"><span class="level-item">3.2</span><span class="level-item">方法</span></span></a></li><li><a class="level is-mobile" href="#实验效果"><span class="level-left"><span class="level-item">3.3</span><span class="level-item">实验效果</span></span></a></li></ul></li><li><a class="level is-mobile" href="#决策型任务"><span class="level-left"><span class="level-item">4</span><span class="level-item">决策型任务</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#实验效果-1"><span class="level-left"><span class="level-item">4.1</span><span class="level-item">实验效果</span></span></a></li></ul></li><li><a class="level is-mobile" href="#LangChain-ReAct"><span class="level-left"><span class="level-item">5</span><span class="level-item">LangChain ReAct</span></span></a></li></ul></div></div><script src="/js/toc.js" defer></script></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="无糖-川大LLM实习Blog" height="28"></a><p class="is-size-7"><span>&copy; 2023 Azyka</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p><p class="is-size-7">© 2023</p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

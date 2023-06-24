@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>【总结】LLM论文阅读（入门篇）-第一周 - 无糖-川大LLM实习Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="无糖-川大LLM实习Blog"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="无糖-川大LLM实习Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="从基础开始认识什么是LLM。本文主要介绍LLM用到的基本技术和GPT系列的发展历程，并解答了LLM为什么会突然爆火的原因——Emergent Ability"><meta property="og:type" content="blog"><meta property="og:title" content="【总结】LLM论文阅读（入门篇）-第一周"><meta property="og:url" content="https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/"><meta property="og:site_name" content="无糖-川大LLM实习Blog"><meta property="og:description" content="从基础开始认识什么是LLM。本文主要介绍LLM用到的基本技术和GPT系列的发展历程，并解答了LLM为什么会突然爆火的原因——Emergent Ability"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled.png"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%201.png"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%202.png"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%203.png"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%204.png"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%205.png"><meta property="og:image" content="https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%206.png"><meta property="article:published_time" content="2023-06-07T11:04:15.000Z"><meta property="article:modified_time" content="2023-06-24T14:33:27.410Z"><meta property="article:author" content="Azyka,洛洛洛,John_zyj"><meta property="article:tag" content="论文阅读"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/"},"headline":"【总结】LLM论文阅读（入门篇）-第一周","image":["https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled.png","https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%201.png","https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%202.png","https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%203.png","https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%204.png","https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%205.png","https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%206.png"],"datePublished":"2023-06-07T11:04:15.000Z","dateModified":"2023-06-24T14:33:27.410Z","author":{"@type":"Person","name":"Azyka,洛洛洛,John_zyj"},"publisher":{"@type":"Organization","name":"无糖-川大LLM实习Blog","logo":{"@type":"ImageObject","url":"https://llm-frame-group.github.io/img/logo.svg"}},"description":"从基础开始认识什么是LLM。本文主要介绍LLM用到的基本技术和GPT系列的发展历程，并解答了LLM为什么会突然爆火的原因——Emergent Ability"}</script><link rel="canonical" href="https://llm-frame-group.github.io/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="无糖-川大LLM实习Blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/LLM-Frame-Group"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2023-06-07T11:04:15.000Z" title="6/7/2023, 11:04:15 AM">2023-06-07</time>发表</span><span class="level-item"><time dateTime="2023-06-24T14:33:27.410Z" title="6/24/2023, 2:33:27 PM">2023-06-24</time>更新</span><span class="level-item"> Azyka,洛洛洛,John_zyj </span><span class="level-item">24 分钟读完 (大约3580个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">【总结】LLM论文阅读（入门篇）-第一周</h1><div class="content"><h1 id="深度学习和Transformer"><a href="#深度学习和Transformer" class="headerlink" title="深度学习和Transformer"></a>深度学习和<strong>Transformer</strong></h1><p>RNN和LSTM都是通过递归的方式处理序列，即当前的隐藏状态是基于前一时间步的隐藏状态和当前的输入来计算。</p>
+<h3 id="循环神经网络-RNN"><a href="#循环神经网络-RNN" class="headerlink" title="循环神经网络 RNN"></a><strong>循环神经网络 RNN</strong></h3><p>通过将隐藏状态从一个时间步传递到下一个时间步，以此捕获序列中的信息</p>
+<h3 id="长短期记忆-LSTM"><a href="#长短期记忆-LSTM" class="headerlink" title="长短期记忆 LSTM"></a><strong>长短期记忆 LSTM</strong></h3><p>引入了一种叫做“门”的机制来控制信息的流动，这使得LSTM解决RNN的梯度消失问题，能够捕获更长距离依赖。</p>
+<h2 id="Transformer"><a href="#Transformer" class="headerlink" title="Transformer"></a><strong>Transformer</strong></h2><h3 id="Self-Attention-Mechanism"><a href="#Self-Attention-Mechanism" class="headerlink" title="Self-Attention Mechanism"></a><strong>Self-Attention Mechanism</strong></h3><blockquote>
+<p>为每个元素分配一个权重，这个权重反映了其他元素对当前元素的重要性。</p>
+</blockquote>
+<ul>
+<li>使用权重矩阵对每个元素生成query和key</li>
+<li>对单个元素，算出该元素的query和其他元素的key的点积，运用softmax函数算出注意力分数</li>
+<li>对注意力分数进行加权求和</li>
+</ul>
+<h3 id="Multi-Head-Self-Attention"><a href="#Multi-Head-Self-Attention" class="headerlink" title="Multi-Head Self-Attention"></a>Multi-Head Self-Attention</h3><blockquote>
+<p>通过多个“头”进行处理，每个“头”都有自己的权重矩阵。然后，将所有头的输出拼接，通过线性变换产生最终的输出。</p>
+</blockquote>
+<ul>
+<li>对于每个头，使用不同的权重矩阵对每个元素生成query和key</li>
+<li>对单个元素，在每个头下，算出该元素的query和其他元素的key的点积，运用softmax函数算出注意力分数</li>
+<li>将所有头的输出拼接在一起，对拼接的输出进行线性变换，得到最终的输出。</li>
+</ul>
+<blockquote>
+<p>在自然语言处理任务中，一个头可能专注于捕捉句法依赖，另一个头可能专注于捕捉语义依赖。这种机制使模型能够更好地理解和生成复杂的文本。</p>
+</blockquote>
+<h3 id="Encoder"><a href="#Encoder" class="headerlink" title="Encoder"></a>Encoder</h3><blockquote>
+<p>Encoder将输入转换为“上下文向量”</p>
+</blockquote>
+<ul>
+<li>Encoder由六层identical layers组成，每一层都由多头自注意力机制和前馈神经网络组成。</li>
+</ul>
+<h3 id="Decoder"><a href="#Decoder" class="headerlink" title="Decoder"></a>Decoder</h3><blockquote>
+<p>Decoder接收编码器产生的上下文向量，将其转换为目标输出</p>
+</blockquote>
+<ul>
+<li>Decoder同样由六层identical layers组成，但每一层都在encoder的layer中针对encoder的输出添加了一个注意力机制。</li>
+<li>这个额外的注意力机制使得decoder在生成每个输出词的时候，能够关注到输入的所有部分</li>
+</ul>
+<h3 id="Why-Self-Attention"><a href="#Why-Self-Attention" class="headerlink" title="Why Self-Attention"></a><strong>Why Self-Attention</strong></h3><p><strong>计算效率</strong></p>
+<p>RNN和LSTM的计算无法并行化。相比之下，Transformer的自注意力机制可以同时处理所有时间步，因此其计算可以高度并行化，提高计算效率。</p>
+<p><strong>捕捉长距离依赖</strong></p>
+<p>Transformer通过自注意力机制可以直接捕获序列中任何两个位置之间的依赖关系，无论距离多远。</p>
+<p><strong>全局上下文理解</strong></p>
+<p>Transformer中的每个元素的表示都由整个序列中的所有元素共同决定，这使得Transformer能更好地理解全局上下文。</p>
+<p><strong>更易于优化</strong></p>
+<p>由于RNN和LSTM的递归性质，它们在优化上可能面临梯度消失和梯度爆炸等问题。</p>
+<p>同时RNN和LSTM需要一个一个处理时间步，而Transformer可以并行处理所有时间步，这使得Transformer的计算更小，可以使用标准的反向传播算法进行优化。</p>
+<hr>
+<h1 id="GPT发展史"><a href="#GPT发展史" class="headerlink" title="GPT发展史"></a>GPT发展史</h1><h2 id="GPT结构"><a href="#GPT结构" class="headerlink" title="GPT结构"></a>GPT结构</h2><p>参考Improving Language Understanding by Generative Pre-Training</p>
+<h2 id="GPT发展"><a href="#GPT发展" class="headerlink" title="GPT发展"></a>GPT发展</h2><table>
+<thead>
+<tr>
+<th>模型名称</th>
+<th>训练方法</th>
+<th>特点</th>
+<th>论文</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPT-1</td>
+<td>语言建模（预训练+微调）</td>
+<td>建立了GPT系列的核心架构；确定了使用上文预测下一单词的基本原则</td>
+<td>Improving Language Understanding Generative Pre-Training</td>
+</tr>
+<tr>
+<td>GPT-2</td>
+<td>语言建模，扩大模型参数到1.5B</td>
+<td>多任务语言模型</td>
+<td>Language Models are Unsupervised Multitask Learners</td>
+</tr>
+<tr>
+<td>GPT-3</td>
+<td>语言建模，扩大模型参数到175B</td>
+<td>提示补全，上下文学习，Few-shot Learning</td>
+<td>Language Models are Few-Shot Learners</td>
+</tr>
+<tr>
+<td>Instruct-GPT</td>
+<td>有监督微调，RLHF</td>
+<td>指令回答，Zero-shot Learning</td>
+<td>Training language models to follow instructions with human feedback</td>
+</tr>
+<tr>
+<td>Codex</td>
+<td>使用代码+文本训练</td>
+<td>代码生成、chain-of-thought (CoT)</td>
+<td>Evaluating Large Language Models Trained on Code</td>
+</tr>
+<tr>
+<td>ChatGPT</td>
+<td>使用对话数据进行强化学习指令微调</td>
+<td>对话历史建模</td>
+<td></td>
+</tr>
+<tr>
+<td>GPT-4</td>
+<td>使用多模态数据</td>
+<td>更强的性能、接受图像输入</td>
+<td>GPT-4 Technical Report</td>
+</tr>
+</tbody></table>
+<p>提示(prompt)补全：根据输入的提示词，补全提示词的句子。</p>
+<p>上下文学习（in-context learning）：在输入中包含目标任务的描述或示例和正常输入测试用例，即使训练中不包含该任务数据，模型仍然可以产生符合期待的输出。</p>
+<p>reinforcement learning from human feedback（RLHF）：使用人工反馈对模型进行微调，使用这种微调可以将模型分化到不同技能上，如Chatgpt更擅长对话。这种微调并不会为模型注入新能力，而是解锁或引出原本存在在模型中的能力（在预训练中获得）。同时，人类微调实际上会导致模型在benchmark上的性能下降，但能够使模型向人类对齐，生成更符合人类需求的输出（零样本问答、道德约束、知识边界认知）。</p>
+<p>指令回答(Responding)：在经过RLHF之前，模型输出大部分是训练集中常见的提示补全模式。现在模型能够输出对prompt的合理回答，而不是相关却无用的句子。</p>
+<p>chain-of-thought (CoT)：常规的prompt策略基于上下文学习能力，在提问前为模型提供（问题-答案）文本对的样本。CoT在常规prompt的基础上，增加了从问题到答案的自然语言推导过程，从而提高模型的逐步推导能力。这种能力很可能使代码训练的副产物。目前只能从实验的角度证明相关性：GPT-3不能进行思维链推理，经过RLHF的GPT-3版本思维链推理同样很弱，而针对代码训练的模型具有很强的语言推理能力。</p>
+<p>对话历史建模：ChatGPT使用对话数据集进行微调和RLHF，使得GPT具备了记忆过往对话的能力。</p>
+<p>多模态模型：能够接受图像输出，理解图像内容。</p>
+<h3 id="GPT-2"><a href="#GPT-2" class="headerlink" title="GPT-2"></a>GPT-2</h3><ul>
+<li>参数数量提高到15亿</li>
+<li>单向语言模型，采用了多任务方式，进一步提升模型的泛化能力</li>
+</ul>
+<h3 id="GPT-3"><a href="#GPT-3" class="headerlink" title="GPT-3"></a>GPT-3</h3><ul>
+<li>参数数量提高到1750 亿</li>
+<li>强大的零样本和少样本学习能力</li>
+<li>生成的文本质量非常高，实验表明人们很难区分其生成的文本是否由人类编写</li>
+</ul>
+<h3 id="GPT-4"><a href="#GPT-4" class="headerlink" title="GPT-4"></a>GPT-4</h3><h2 id="Scaling-Law"><a href="#Scaling-Law" class="headerlink" title="Scaling Law"></a>Scaling Law</h2><ul>
+<li><strong>KM scaling law. (2020)</strong></li>
+<li><strong>Chinchilla scaling law. (2022)</strong></li>
+</ul>
+<hr>
+<h1 id="LLM优越性"><a href="#LLM优越性" class="headerlink" title="LLM优越性"></a>LLM优越性</h1><h2 id="为什么GPT-3没有引起人们普遍的关注？"><a href="#为什么GPT-3没有引起人们普遍的关注？" class="headerlink" title="为什么GPT-3没有引起人们普遍的关注？"></a>为什么GPT-3没有引起人们普遍的关注？</h2><p>GPT-3在2020年出现，但直到2022年LLM才进入大众视野。从实际性能上看，最初版本的GPT-3哪怕是其中最大的175B模型，其表现也未能超越经过微调的预训练语言模型（PLM）。而实验观测得到的比例定律让模型性能与规模挂钩，这意味着即使更改模型架构，也无法突破参数规模的限制，令模型难以取得重大的性能突破。</p>
+<p>然而在2022年，Chain of Thought(CoT)和instruction tuning的出现打破了比例定律，使得LLM在规模有限的情况下出现了性能上的飞跃。</p>
+<img src="/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled.png" class="" alt="Scaling Law">
+
+<p>instruction tuning：使用指令数据集（包含指令形式的任务描述、输入输出对、几组示例）对模型进行fine-tune。而RLHF对应的微调被称为alignment tuning</p>
+<img src="/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%201.png" class="" alt="指令数据集">
+
+<h2 id="Emergent-Ability"><a href="#Emergent-Ability" class="headerlink" title="Emergent Ability"></a>Emergent Ability</h2><p>凝聚态物理里面常用涌现一词（英文emergent）来描述随着粒子数目增多突然出现的奇异现象。</p>
+<p>涌现能力定义：小模型没有，只有大模型才有的能力。</p>
+<p>涌现能力体现之处很多，我们重点关注的是那些（1）NLP领域长期努力但未能实现的；（2）其他NLP模型难以解决的；（3）关系到自然语言本质的；</p>
+<p>（不同的综述对重要的涌现能力的定义存在微妙差异，但总体方向相似）</p>
+<h3 id="In-context-learning-ICL"><a href="#In-context-learning-ICL" class="headerlink" title="In-context learning (ICL)"></a>In-context learning (ICL)</h3><p>上下文学习能力最早在GPT-3中引入。假设现在有一个新的任务，只需要给语言模型提供任务描述或几个示例，它可以产生预期的输出，而不需要额外的训练和梯度更新。</p>
+<h3 id="Instruction-following"><a href="#Instruction-following" class="headerlink" title="Instruction following"></a>Instruction following</h3><p>模型经过指令微调后，可以只根据指令形式的任务描述执行新任务，而不需要给出具体示例。最新研究中，想要实现指令服从，至少需要62B的模型。</p>
+<p>不过对较小的模型，指令微调仍然可以能提高模型的性能。</p>
+<img src="/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%202.png" class="" alt="指令微调和CoT效果">
+
+<p>同时，指令微调可以显著改善模型的使用体验。</p>
+<img src="/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%203.png" class="" alt="人工评分">
+
+<p>根据测试人员对模型在真实问题（从LLM API中收集）下回答的评价，强化学习（PPO）和监督微调（SFT）后的模型回答质量显著高于微调前。</p>
+<h3 id="Step-by-step-reasoning"><a href="#Step-by-step-reasoning" class="headerlink" title="Step-by-step reasoning"></a>Step-by-step reasoning</h3><p>小型的语言模型通常很难解决需要多个推理步骤的复杂任务，如数学类相关的问题。通过使用chain-of-thought (CoT)策略，把带有中间步骤的样例加入到prompt中，LLM能够学习逐步推理直到产生最终答案的能力。</p>
+<p><strong>人工CoT：</strong></p>
+<ul>
+<li>输入</li>
+</ul>
+<p>问题：小明有5个乒乓球，又买了2罐子乒乓球，每个罐子有3个乒乓球。请问小明现在有多少个乒乓球？</p>
+<p>回答：小明从5个乒乓球开始，2个罐子，每罐3个，总共6个乒乓球。5+6&#x3D;11。答案是11。</p>
+<p>问题：锯一根10米长的木棒，每锯一段要2分钟。如果把这根木棒锯成相等的5段，请问需要多长时间？</p>
+<p>回答：</p>
+<ul>
+<li>输出</li>
+</ul>
+<p>把木棒锯成5段，需要4次。锯一次2分钟，4次需要4*2&#x3D;8 分钟。答案是8分钟。</p>
+<p><strong>Zero-shot CoT：</strong></p>
+<ul>
+<li>输入</li>
+</ul>
+<p>问题：小明有5个乒乓球，又买了2罐子乒乓球，每个罐子有3个乒乓球。请问小明现在有多少个乒乓球？</p>
+<p>回答：Let’s think step by step.</p>
+<ul>
+<li>输出</li>
+</ul>
+<p>Let’s think step by step. 把木棒锯成5段，需要4次。锯一次2分钟，4次需要4*2&#x3D;8 分钟。答案是8分钟。</p>
+<p><strong>Auto-CoT</strong></p>
+<img src="/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%204.png" class="" alt="Auto-CoT">
+
+<ol>
+<li>聚类选取有代表性的问题</li>
+<li>对于每一个采样的问题拼接上“Let’s think step by step”（类似于 Zero-Shot-CoT ）输入到语言模型，让语言模型生成中间推理步骤和答案，然后把这些所有采样的问题以及语言模型生成的中间推理步骤和答案全部拼接在一起，构成少样本学习的样例，最后再拼接上需要求解的问题一起输入到语言模型</li>
+</ol>
+<p>这种方法显著提高了LLM解决问题的能力。根据实验分析，当模型规模大于62B时，CoT才比直接回答问题存在优势。如果模型规模较小，CoT反而会导致性能降低。（根据模型和任务的不同，这个临界值有差异）</p>
+<img src="/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%205.png" class="" alt="指令微调和CoT效果">
+
+<p>CoT能力来源分析</p>
+<p>CoT出现的必要条件是模型达到一定规模，但规模并不是CoT的充分条件。</p>
+<ul>
+<li>在175B的初始GPT-3、OPT、BLOOM等模型中都没有表现出CoT能力。（表现出CoT指采用CoT prompting后，模型性能比普通prompting和微调T5-11B更高）</li>
+</ul>
+<p>CoT与训练集中的代码数据相关。</p>
+<ul>
+<li>使用代码数据作为训练集，大小为GPT-3数据集28%的CodeX，展现了较强的链式推理能力。</li>
+</ul>
+<p>CoT与指令微调相关</p>
+<ul>
+<li>GPT-3版本text-davinci-001链式推理能力差，而经过强化学习指令微调后的版本text-davinci-002，模型链式推理能力显著增强。</li>
+</ul>
+<p>其他涌现能力（2022&#x2F;8）</p>
+<img src="/2023/06/07/%E3%80%90%E6%80%BB%E7%BB%93%E3%80%91LLM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%88%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%89-%E7%AC%AC%E4%B8%80%E5%91%A8/Untitled%206.png" class="" alt="Emergent Ability">
+
+<ul>
+<li><strong>Few-Shot Prompted Tasks.</strong> 在模型达到一定规模后，能通过few-shot prompting策略在benchmark上取得突破性的准确率增长</li>
+<li><strong>Augmented Prompting Strategies.</strong> 能够增强LLM的prompting技巧。如果某些技巧在模型达到一定程度才能起作用，在此之前都没有效果甚至有害，那也称其为涌现能力</li>
+</ul>
+<p>注意，一个LLM并不一定包含所有涌现能力，包含涌现能力也不说明LLM一定优于PLM。</p>
+<h1 id="Prompt-Engineering"><a href="#Prompt-Engineering" class="headerlink" title="Prompt Engineering"></a>Prompt Engineering</h1><h3 id="system-prompt"><a href="#system-prompt" class="headerlink" title="system prompt"></a><strong>system prompt</strong></h3><p>引导模型生成与任务相关的响应</p>
+<h3 id="user-prompt"><a href="#user-prompt" class="headerlink" title="user prompt"></a><strong>user prompt</strong></h3><p>为模型提供了具体的问题或要求</p>
+<blockquote>
+<p>通过不断优化提示来提高模型的性能。</p>
+<p>这种技术的优点是可以简单的对模型进行微调和定制，而无需重新训练整个模型。</p>
+</blockquote>
+</div><div class="article-licensing box"><div class="licensing-title"><p>【总结】LLM论文阅读（入门篇）-第一周</p><p><a href="https://llm-frame-group.github.io/2023/06/07/【总结】LLM论文阅读（入门篇）-第一周/">https://llm-frame-group.github.io/2023/06/07/【总结】LLM论文阅读（入门篇）-第一周/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Azyka,洛洛洛,John_zyj</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2023-06-07</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2023-06-24</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">论文阅读</a></div><!--!--></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2023/06/09/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91Lora%EF%BC%9ALow-rank-adaptation-of-large-language-models/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">【论文导读】Lora：Low-rank adaptation of large language models</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2023/06/06/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91GPT-1%EF%BC%9AImproving-Language-Understanding-by-Generative-Pre-Training/"><span class="level-item">【论文导读】GPT-1：Improving Language Understanding by Generative Pre-Training</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/img/avatar.png" alt="无糖-SCU LLM框架组"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">无糖-SCU LLM框架组</p><p class="is-size-6 is-block">更新中 ♪（＾∀＾●）ﾉｼ （●´∀｀）♪</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>中国 成都</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">11</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">3</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/LLM-Frame-Group" target="_blank" rel="noopener">关注我</a></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-24T21:32:49.000Z">2023-06-24</time></p><p class="title"><a href="/2023/06/24/%E3%80%90Auto-Task%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93%E3%80%91/">【Auto-Task项目总结】</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-20T10:20:33.000Z">2023-06-20</time></p><p class="title"><a href="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91The-RefinedWeb-Dataset-for-Falcon-LLM/">【论文导读】The RefinedWeb Dataset for Falcon LLM</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-20T10:09:21.000Z">2023-06-20</time></p><p class="title"><a href="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91QLoRA%EF%BC%9AEfficient-Finetuning-of-Quantized-LLMs/">【论文导读】QLoRA：Efficient Finetuning of Quantized LLMs</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-20T09:50:44.000Z">2023-06-20</time></p><p class="title"><a href="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91Large-language-models-are-human-level-prompt-engineers/">【论文导读】Large language models are human-level prompt engineers</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-20T09:40:26.000Z">2023-06-20</time></p><p class="title"><a href="/2023/06/20/%E3%80%90%E8%AE%BA%E6%96%87%E5%AF%BC%E8%AF%BB%E3%80%91ReAct%EF%BC%9ASynergizing-Reasoning-and-Acting-in-Language-Models/">【论文导读】ReAct：Synergizing Reasoning and Acting in Language Models</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2023/"><span class="level-start"><span class="level-item">2023</span></span><span class="level-end"><span class="level-item tag">11</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Prompt-Engineering/"><span class="tag">Prompt Engineering</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/auto-task/"><span class="tag">auto-task</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/"><span class="tag">论文阅读</span><span class="tag">10</span></a></div></div></div></div></div><div class="column-right-shadow is-hidden-widescreen"></div></div><div class="column column-right is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only order-3"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#深度学习和Transformer"><span class="level-left"><span class="level-item">1</span><span class="level-item">深度学习和Transformer</span></span></a><ul class="menu-list"><ul class="menu-list"><li><a class="level is-mobile" href="#循环神经网络-RNN"><span class="level-left"><span class="level-item">1.1.1</span><span class="level-item">循环神经网络 RNN</span></span></a></li><li><a class="level is-mobile" href="#长短期记忆-LSTM"><span class="level-left"><span class="level-item">1.1.2</span><span class="level-item">长短期记忆 LSTM</span></span></a></li></ul><li><a class="level is-mobile" href="#Transformer"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">Transformer</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#Self-Attention-Mechanism"><span class="level-left"><span class="level-item">1.2.1</span><span class="level-item">Self-Attention Mechanism</span></span></a></li><li><a class="level is-mobile" href="#Multi-Head-Self-Attention"><span class="level-left"><span class="level-item">1.2.2</span><span class="level-item">Multi-Head Self-Attention</span></span></a></li><li><a class="level is-mobile" href="#Encoder"><span class="level-left"><span class="level-item">1.2.3</span><span class="level-item">Encoder</span></span></a></li><li><a class="level is-mobile" href="#Decoder"><span class="level-left"><span class="level-item">1.2.4</span><span class="level-item">Decoder</span></span></a></li><li><a class="level is-mobile" href="#Why-Self-Attention"><span class="level-left"><span class="level-item">1.2.5</span><span class="level-item">Why Self-Attention</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#GPT发展史"><span class="level-left"><span class="level-item">2</span><span class="level-item">GPT发展史</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#GPT结构"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">GPT结构</span></span></a></li><li><a class="level is-mobile" href="#GPT发展"><span class="level-left"><span class="level-item">2.2</span><span class="level-item">GPT发展</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#GPT-2"><span class="level-left"><span class="level-item">2.2.1</span><span class="level-item">GPT-2</span></span></a></li><li><a class="level is-mobile" href="#GPT-3"><span class="level-left"><span class="level-item">2.2.2</span><span class="level-item">GPT-3</span></span></a></li><li><a class="level is-mobile" href="#GPT-4"><span class="level-left"><span class="level-item">2.2.3</span><span class="level-item">GPT-4</span></span></a></li></ul></li><li><a class="level is-mobile" href="#Scaling-Law"><span class="level-left"><span class="level-item">2.3</span><span class="level-item">Scaling Law</span></span></a></li></ul></li><li><a class="level is-mobile" href="#LLM优越性"><span class="level-left"><span class="level-item">3</span><span class="level-item">LLM优越性</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#为什么GPT-3没有引起人们普遍的关注？"><span class="level-left"><span class="level-item">3.1</span><span class="level-item">为什么GPT-3没有引起人们普遍的关注？</span></span></a></li><li><a class="level is-mobile" href="#Emergent-Ability"><span class="level-left"><span class="level-item">3.2</span><span class="level-item">Emergent Ability</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#In-context-learning-ICL"><span class="level-left"><span class="level-item">3.2.1</span><span class="level-item">In-context learning (ICL)</span></span></a></li><li><a class="level is-mobile" href="#Instruction-following"><span class="level-left"><span class="level-item">3.2.2</span><span class="level-item">Instruction following</span></span></a></li><li><a class="level is-mobile" href="#Step-by-step-reasoning"><span class="level-left"><span class="level-item">3.2.3</span><span class="level-item">Step-by-step reasoning</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#Prompt-Engineering"><span class="level-left"><span class="level-item">4</span><span class="level-item">Prompt Engineering</span></span></a><ul class="menu-list"><ul class="menu-list"><li><a class="level is-mobile" href="#system-prompt"><span class="level-left"><span class="level-item">4.1.1</span><span class="level-item">system prompt</span></span></a></li><li><a class="level is-mobile" href="#user-prompt"><span class="level-left"><span class="level-item">4.1.2</span><span class="level-item">user prompt</span></span></a></li></ul></ul></li></ul></div></div><script src="/js/toc.js" defer></script></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="无糖-川大LLM实习Blog" height="28"></a><p class="is-size-7"><span>&copy; 2023 Azyka,洛洛洛,John_zyj</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p><p class="is-size-7">© 2023</p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
